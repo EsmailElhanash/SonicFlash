@@ -15,29 +15,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    background = BrightYellow
-)
-
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-    background = BrightYellow
+    primary = LightBlue, // Using Bright Yellow as the primary color.
+    onPrimary = IconWhite, // Using White for content/text that is on top of the primary color.
+    secondary = ElementDarkGray, // Using Dark Gray as the secondary color.
+    onSecondary = IconWhite, // Using White for content/text that is on top of the secondary color.
+    tertiary = ElementDarkGray, // Using Dark Gray again for the tertiary, but you could choose another accent color if you wanted.
+    onTertiary = IconWhite, // Using White for content/text that is on top of the tertiary color.
+    background = LightBlue, // Using Bright Yellow as the background color.
+    onBackground = ElementDarkGray, // Using Dark Gray for content/text on the background.
+    surface = IconWhite, // Optional, if you need a surface color, you might want to use White.
+    onSurface = ElementDarkGray, // Using Dark Gray for content/text on the surface color.
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    // You can continue to override other default colors as needed
 )
+
 
 @Composable
 fun FlashLightTheme(
@@ -46,15 +38,7 @@ fun FlashLightTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = LightColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
