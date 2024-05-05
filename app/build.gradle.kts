@@ -62,6 +62,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.core)
+
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
