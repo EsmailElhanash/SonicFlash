@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,12 +29,46 @@ import com.esmailelhanash.flashlight.ui.theme.LightBlue
 
 @Composable
 fun Content() {
+    var isFrontFlash by remember { mutableStateOf(false) }
     FlashLightTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = LightBlue
         ) {
-            FlashSwitch {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = if (isFrontFlash) "Front Flash" else "Back Flash",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+
+                IconButton(
+                    modifier = Modifier.size(96.dp).padding(16.dp),
+                    onClick = {
+                        isFrontFlash = !isFrontFlash
+
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = if (isFrontFlash) R.drawable.flash_on else R.drawable.flash_off),
+                        contentDescription = if (isFrontFlash) "Front Flash" else "Back Flash",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.rotate),
+                    contentDescription = if (isFrontFlash) "Front Flash" else "Back Flash",
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
 
             }
         }
@@ -41,39 +76,6 @@ fun Content() {
 
 }
 
-@Composable
-private fun FlashSwitch(onFlashToggle: (Boolean) -> Unit) {
-    var isFrontFlash by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-
-        IconButton(
-            modifier = Modifier.size(96.dp).padding(16.dp),
-            onClick = {
-                isFrontFlash = !isFrontFlash
-                onFlashToggle(isFrontFlash)
-            }
-        ) {
-            Icon(
-                painter = painterResource(id = if (isFrontFlash) R.drawable.flash_on else R.drawable.flash_off),
-                contentDescription = if (isFrontFlash) "Front Flash" else "Back Flash",
-                tint = MaterialTheme.colorScheme.onSurface
-            )
-        }
-        Text(
-            text = if (isFrontFlash) "Front Flash" else "Back Flash",
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
