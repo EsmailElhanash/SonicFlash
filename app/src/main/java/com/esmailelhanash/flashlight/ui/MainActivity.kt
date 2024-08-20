@@ -1,14 +1,26 @@
 package com.esmailelhanash.flashlight.ui
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.esmailelhanash.flashlight.ui.permissions.PermissionHandlers
 
 class MainActivity : ComponentActivity() {
 
@@ -18,51 +30,65 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
+
         setContent {
-            Content()
-            PermissionHandlers(activity = this)
+            val context = LocalContext.current
+
+            // Define the permission you want to request
+            val cameraPermission = Manifest.permission.CAMERA
+
+            // Define the launcher for the permission request
+            val launcher = cameraPermissionLauncher(context)
+
+            // Check the current permission status
+            val hasCameraPermission = ContextCompat.checkSelfPermission(
+                context, cameraPermission
+            ) == PackageManager.PERMISSION_GRANTED
+
+
+            var cameraPermissionState by remember { mutableStateOf(PermissionState.DENIED) }
+
+            Content(cameraPermissionState){
+                if (!hasCameraPermission) {
+                    launcher.launch(cameraPermission)
+                }else{
+                    cameraPermissionState = PermissionState.GRANTED
+                }
+            }
         }
-
-
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) { // Match the request code used in the requestPermissions call
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted
-                Log.d(TAG, "Camera permission granted")
-
+    @Composable
+    private fun cameraPermissionLauncher(
+        context: Context,
+    ) = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    context as Activity,
+                    Manifest.permission.CAMERA
+                )
+            ) {
+                Toast.makeText(
+                    context,
+                    "Camera permission is needed to access the flashlight.",
+                    Toast.LENGTH_LONG
+                ).show()
             } else {
-                // Permission was denied or request was cancelled
-                Log.d(TAG, "Camera permission denied")
+                Toast.makeText(
+                    context,
+                    "Camera Permission Denied Permanently. Go to settings to enable it.",
+                    Toast.LENGTH_LONG
+                ).show()
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
+                }
+                context.startActivity(intent)
             }
         }
     }
-
-    private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-
-        cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                cameraProvider.unbindAll()
-                val imageCapture = ImageCapture.Builder()
-                    .setFlashMode(ImageCapture.FLASH_MODE_ON)
-                    .build()
-
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, imageCapture)
-                    .cameraControl
-                    .enableTorch(true)
-            } catch(exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-
-        }, ContextCompat.getMainExecutor(this))
-    }
+}
+enum class PermissionState {
+    GRANTED, DENIED,
 }

@@ -3,15 +3,11 @@ package com.esmailelhanash.flashlight.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // Your new theme colors
-val BackgroundBrightYellow = Color(0xFFFFEB3B) // Bright Yellow for the background
 val IconWhite = Color(0xFFFFFFFF) // White color for the flashlight icon
 val ElementDarkGray = Color(0xFF333333) // Dark Gray for additional elements
 
-val DeepBlue = Color(0xFF133C55) // A deep blue shade
-val MediumBlue = Color(0xFF386FA4) // A medium blue shade
 val LightBlue = Color(0xFF59A5D8) // A lighter blue shade
-val SkyBlue = Color(0xFF84D2F6) // A sky blue shade
-val PaleSkyBlue = Color(0xFF91E5F6) // A pale sky blue shade
+val LighterBlue = Color(0xFFBFFAFF) // A lighter blue shade
 
 
 val VibrantRed = Color(0xFFFF1744) // Vibrant Red
