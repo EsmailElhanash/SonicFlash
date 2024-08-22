@@ -24,8 +24,6 @@ import androidx.core.content.ContextCompat
 
 class MainActivity : ComponentActivity() {
 
-    private val TAG = "MainActivity"
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -48,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
             var cameraPermissionState by remember { mutableStateOf(PermissionState.DENIED) }
 
-            Content(cameraPermissionState){
+            Content(cameraPermissionState,this){
                 if (!hasCameraPermission) {
                     launcher.launch(cameraPermission)
                 }else{

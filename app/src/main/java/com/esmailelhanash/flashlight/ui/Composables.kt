@@ -1,8 +1,9 @@
 package com.esmailelhanash.flashlight.ui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,31 +31,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.esmailelhanash.flashlight.R
+import com.esmailelhanash.flashlight.cameramanager.turnOnFlashLight
 import com.esmailelhanash.flashlight.ui.theme.FlashLightTheme
-import com.esmailelhanash.flashlight.ui.theme.LightBlue
-import com.esmailelhanash.flashlight.ui.theme.LighterBlue
 
 
 @Composable
-fun Content(cameraPermissionState: PermissionState, checkCameraPermission: () -> Unit) {
+fun Content(cameraPermissionState: PermissionState,componentActivity: ComponentActivity, checkCameraPermission: () -> Unit) {
 
     var isBackFlashlightOn by remember { mutableStateOf(false) }
-    var isFrontFlashlightOn by remember { mutableStateOf(false) }
-
-
     var backFlashMode  by remember { mutableStateOf(FlashMode.TORCH) }
-    var frontFlashMode by remember { mutableStateOf(FlashMode.TORCH) }
 
-    // if the flash is on then the bg color is white else it is black
-    // and the opposite for the text color and the same for front flash
-
-    val backgroundColorBackFlash = if (isBackFlashlightOn || isFrontFlashlightOn) Color.White else Color.Black
-    val textColorBackFlash = if (isBackFlashlightOn || isFrontFlashlightOn) Color.Black else Color.White
-
-    val backgroundColorFrontFlash = if (isFrontFlashlightOn) Color.White else Color.Black
-    val textColorFrontFlash = if (isFrontFlashlightOn) Color.Black else Color.White
 
     FlashLightTheme {
         Scaffold (
@@ -72,27 +59,34 @@ fun Content(cameraPermissionState: PermissionState, checkCameraPermission: () ->
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    // two big buttons , the first is for back flash and the second is for front flash
-                    // with full width and height and background color and text color and rounded corners
-                    // and onClick listeners to handle the flash direction changes
                     Box(
                         modifier = Modifier
-                            .background(backgroundColorBackFlash, shape = RoundedCornerShape(16.dp))
-                            .padding(horizontal = 64.dp, vertical = 16.dp)
+                            .background(
+                                Color.Black
+                                , shape = RoundedCornerShape(16.dp))
+                            .padding(horizontal = 16.dp, vertical = 16.dp)
+                            .size(
+                                100.dp, 100.dp
+                            )
                             .clickable {
-                                if (cameraPermissionState == PermissionState.GRANTED)
+                                if (cameraPermissionState == PermissionState.GRANTED) {
                                     isBackFlashlightOn = !isBackFlashlightOn
+                                    turnOnFlashLight(componentActivity)
+
+
+                                }
                                 else
                                     checkCameraPermission()
                                 // handle back flash
                             }
                     ) {
-                        Text(
-                            text = "Back Flash",
-                            color = textColorBackFlash,
-                            fontSize = 20.sp, // Set the desired font size
-                            modifier = Modifier
-                                .align(Alignment.Center) // Center the text within the Box
+                        // an image, showing flash_on.xml if flash light is on, and showing
+                        // flash_off.xml if flash light is off
+                        Icon(
+                            painter = if (isBackFlashlightOn) painterResource(id = R.drawable.flash_on) else painterResource(id = R.drawable.flash_off),
+                            contentDescription = "Flashlight",
+                            tint = Color.White,
+
                         )
                     }
 
@@ -100,43 +94,13 @@ fun Content(cameraPermissionState: PermissionState, checkCameraPermission: () ->
                     // if back flash is on, show a horizontal selectable texts to
                     // choose between flash modes:
                     // torch, strobe, Pulse, SOS, Breathing modes, torch is default
-                    if (isBackFlashlightOn)
-                        FlashModesRow{ flashMode ->
+                    if (isBackFlashlightOn) {
+                        // a spacer
+                        Spacer(modifier = Modifier.padding(20.dp))
+                        FlashModesRow { flashMode ->
                             backFlashMode = flashMode
                         }
-
-                    Spacer(
-                        modifier = Modifier.padding(8.dp)
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .background(backgroundColorFrontFlash, shape = RoundedCornerShape(16.dp))
-                            .padding(horizontal = 64.dp, vertical = 16.dp)
-                            .clickable {
-                                if (cameraPermissionState == PermissionState.GRANTED)
-                                    isFrontFlashlightOn = !isFrontFlashlightOn
-                                else
-                                    checkCameraPermission()
-
-                            }
-                    ) {
-                        Text(
-                            text = "Front Flash",
-                            color = textColorFrontFlash,
-                            fontSize = 20.sp, // Set the desired font size
-                            modifier = Modifier
-                                .align(Alignment.Center) // Center the text within the Box
-                        )
                     }
-
-                    if (isFrontFlashlightOn)
-                        FlashModesRow { flashMode ->
-                            frontFlashMode = flashMode
-                        }
-
-
-                    // a button to request camera permission
 
                 }
             }
@@ -145,39 +109,34 @@ fun Content(cameraPermissionState: PermissionState, checkCameraPermission: () ->
     }
 
 }
-
-
-
-// flash modes row composable
-// show a horizontal selectable texts to
-// choose between flash modes:
-// torch, strobe, Pulse, SOS, Breathing modes, torch is default
 @Composable
 fun FlashModesRow(onFlashModeSelected: (FlashMode) -> Unit) {
     var selectedFlashMode by remember { mutableStateOf(FlashMode.TORCH) }
-    
+    val scrollState = rememberScrollState()
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(1.dp, LightBlue, shape = RoundedCornerShape(16.dp)),
+        modifier = Modifier.fillMaxWidth()
+            .horizontalScroll(scrollState),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         FlashMode.entries.forEach { flashMode ->
-            Button(
-                onClick = {
-                    selectedFlashMode = flashMode
-                    onFlashModeSelected(flashMode)
-                },
+            val isSelected = selectedFlashMode == flashMode
+            val backgroundColor = if (isSelected) Color.Black else Color.White
+            val textColor = if (isSelected) Color.White else Color.Black
+
+            Box(
                 modifier = Modifier
-                    .padding(8.dp)
-                    .background(if (selectedFlashMode == flashMode) LighterBlue else Color.Transparent, shape = RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp)
+                    .background(backgroundColor, shape = RoundedCornerShape(8.dp))
+                    .clickable {
+                        selectedFlashMode = flashMode
+                        onFlashModeSelected(flashMode)
+                    }
+                    .padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = flashMode.name,
-                    color = if (selectedFlashMode == flashMode) Color.White else Color.Black
+                    flashMode.name,
+                    color = textColor,
+                    modifier = Modifier.padding(8.dp)
                 )
             }
         }
@@ -225,7 +184,8 @@ private fun MainAppBar() {
 @Composable
 private fun ContentPreview() {
     Content(
-        PermissionState.GRANTED
+        PermissionState.GRANTED,
+        ComponentActivity(),
     ){}
 }
 
