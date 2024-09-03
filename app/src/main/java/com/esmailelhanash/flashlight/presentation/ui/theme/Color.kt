@@ -1,4 +1,4 @@
-package com.esmailelhanash.flashlight.ui.theme
+package com.esmailelhanash.flashlight.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
