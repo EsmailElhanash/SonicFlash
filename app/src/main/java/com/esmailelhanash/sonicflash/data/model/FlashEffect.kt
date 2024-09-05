@@ -1,4 +1,4 @@
-package com.esmailelhanash.flashlight.data.model
+package com.esmailelhanash.sonicflash.data.model
 
 
 data class FlashEffect (val name : String,

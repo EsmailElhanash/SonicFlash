@@ -1,4 +1,4 @@
-package com.esmailelhanash.flashlight.presentation.ui.theme
+package com.esmailelhanash.sonicflash.presentation.ui.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
