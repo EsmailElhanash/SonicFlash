@@ -1,4 +1,4 @@
-package com.esmailelhanash.flashlight.domain.camera
+package com.esmailelhanash.sonicflash.domain.camera
 
 import androidx.camera.core.Camera
 

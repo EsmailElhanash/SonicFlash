@@ -1,6 +1,6 @@
-package com.esmailelhanash.flashlight.domain.flashlight
+package com.esmailelhanash.sonicflash.domain.flashlight
 
-import com.esmailelhanash.flashlight.domain.camera.ICameraProvider
+import com.esmailelhanash.sonicflash.domain.camera.ICameraProvider
 
 abstract class IFlashLightController(cameraProvider: ICameraProvider) : FlashEffectExecute{
     val camera = cameraProvider.getCamera()

@@ -1,8 +1,8 @@
-package com.esmailelhanash.flashlight.data.flashlight
+package com.esmailelhanash.sonicflash.data.flashlight
 
-import com.esmailelhanash.flashlight.data.model.FlashEffect
-import com.esmailelhanash.flashlight.domain.camera.ICameraProvider
-import com.esmailelhanash.flashlight.domain.flashlight.IFlashLightController
+import com.esmailelhanash.sonicflash.data.model.FlashEffect
+import com.esmailelhanash.sonicflash.domain.camera.ICameraProvider
+import com.esmailelhanash.sonicflash.domain.flashlight.IFlashLightController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

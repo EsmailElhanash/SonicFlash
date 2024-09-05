@@ -1,5 +1,7 @@
-package com.esmailelhanash.flashlight.presentation.ui
+package com.esmailelhanash.sonicflash.presentation.ui
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -20,22 +22,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.esmailelhanash.flashlight.R
-import com.esmailelhanash.flashlight.data.model.FlashEffect
-import com.esmailelhanash.flashlight.data.model.defaultFlashModes
-import com.esmailelhanash.flashlight.presentation.ui.theme.FlashLightTheme
-import com.esmailelhanash.flashlight.service.FlashlightService
+import com.esmailelhanash.sonicflash.R
+import com.esmailelhanash.sonicflash.data.model.defaultFlashModes
+import com.esmailelhanash.sonicflash.presentation.ui.theme.FlashLightTheme
+import com.esmailelhanash.sonicflash.service.FlashlightService
 
 
 @Composable
-fun MainContent(cameraPermissionState: PermissionState,
+fun MainContent(permissionsGranted: Boolean,
                 lifecycleService: FlashlightService?,
-                checkCameraPermission: () -> Unit) {
+
+                checkPermissions: () -> Unit) {
 
     FlashLightTheme {
         Scaffold (
@@ -48,10 +52,13 @@ fun MainContent(cameraPermissionState: PermissionState,
 
                 if (lifecycleService == null) {
                     // show some loading indicator
-                    Box{
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
                         CircularProgressIndicator()
                     }
-                }else MainColumnContent(cameraPermissionState, lifecycleService, checkCameraPermission)
+                }else MainColumnContent(permissionsGranted, lifecycleService, checkPermissions)
 
             }
         }
@@ -61,10 +68,11 @@ fun MainContent(cameraPermissionState: PermissionState,
 }
 @Composable
 private fun MainColumnContent(
-    cameraPermissionState: PermissionState,
+    permissionsGranted: Boolean,
     lifecycleService: FlashlightService,
     checkCameraPermission: () -> Unit
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -72,7 +80,7 @@ private fun MainColumnContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        val isBackFlashlightOn = lifecycleService.isFlashOn().observeAsState().value ?: false
         Box(
             modifier = Modifier
                 .background(
@@ -83,22 +91,40 @@ private fun MainColumnContent(
                     100.dp, 100.dp
                 )
                 .clickable {
-                    if (cameraPermissionState == PermissionState.GRANTED) {
-
+                    if (permissionsGranted) {
+                        lifecycleService.toggleFlash()
                     } else
                         checkCameraPermission()
                     // handle back flash
                 }
         ) {
+            // an image, showing flash_on.xml if flash light is on, and showing
+            // flash_off.xml if flash light is off
+            Icon(
+                painter = if (isBackFlashlightOn) painterResource(id = R.drawable.flash_on) else painterResource(id = R.drawable.flash_off),
+                contentDescription = "Flashlight",
+                tint = Color.White,
 
+            )
         }
+
+        FlashModesRow(lifecycleService)
+
+        AdContent()
 
     }
 }
 
+fun stopFlashlightService(context: Context) {
+    val intent = Intent(context, FlashlightService::class.java)
+    context.stopService(intent)
+}
+
+
+
 @Composable
-private fun FlashModesRow(onFlashModeSelected: (FlashEffect) -> Unit) {
-//    var selectedFlashMode by remember { mutableStateOf(FlashEffect.TORCH) }
+private fun FlashModesRow(lifecycleService: FlashlightService) {
+    val flashEffect = lifecycleService.getFlashEffect().observeAsState().value
     val scrollState = rememberScrollState()
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -107,22 +133,21 @@ private fun FlashModesRow(onFlashModeSelected: (FlashEffect) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         defaultFlashModes.forEach { flashMode ->
-//            val isSelected = selectedFlashMode == flashMode
-//            val backgroundColor = if (isSelected) Color.Black else Color.White
-//            val textColor = if (isSelected) Color.White else Color.Black
+            val isSelected = flashEffect == flashMode
+            val backgroundColor = if (isSelected) Color.Black else Color.White
+            val textColor = if (isSelected) Color.White else Color.Black
 
             Box(
                 modifier = Modifier
-//                    .background(backgroundColor, shape = RoundedCornerShape(8.dp))
+                    .background(backgroundColor, shape = RoundedCornerShape(8.dp))
                     .clickable {
-//                        selectedFlashMode = flashMode
-                        onFlashModeSelected(flashMode)
+                        lifecycleService.setFlashEffect(flashMode)
                     }
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
                     flashMode.name,
-//                    color = textColor,
+                    color = textColor,
                     modifier = Modifier.padding(8.dp)
                 )
             }
@@ -167,12 +192,13 @@ private fun MainAppBar() {
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//private fun ContentPreview() {
-//    MainContent(
-//        PermissionState.GRANTED
-//    ){}
-//}
+@Preview(showBackground = true)
+@Composable
+private fun ContentPreview() {
+    MainContent(
+        true,
+        FlashlightService()
+    ){}
+}
 
 

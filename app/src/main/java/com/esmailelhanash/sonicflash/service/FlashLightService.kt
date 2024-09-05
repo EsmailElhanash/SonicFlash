@@ -1,4 +1,4 @@
-package com.esmailelhanash.flashlight.service
+package com.esmailelhanash.sonicflash.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -10,15 +10,16 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import com.esmailelhanash.flashlight.R
-import com.esmailelhanash.flashlight.data.camera.CameraManager
-import com.esmailelhanash.flashlight.data.flashlight.FlashLightController
-import com.esmailelhanash.flashlight.data.model.FlashEffect
-import com.esmailelhanash.flashlight.domain.camera.ICameraProvider
-import com.esmailelhanash.flashlight.presentation.viewmodel.FlashlightViewModel
-import com.esmailelhanash.flashlight.presentation.viewmodel.FlashlightViewModelFactory
+import com.esmailelhanash.sonicflash.R
+import com.esmailelhanash.sonicflash.data.camera.CameraManager
+import com.esmailelhanash.sonicflash.data.flashlight.FlashLightController
+import com.esmailelhanash.sonicflash.data.model.FlashEffect
+import com.esmailelhanash.sonicflash.domain.camera.ICameraProvider
+import com.esmailelhanash.sonicflash.presentation.viewmodel.FlashlightViewModel
+import com.esmailelhanash.sonicflash.presentation.viewmodel.FlashlightViewModelFactory
 
 class FlashlightService : LifecycleService(), ViewModelStoreOwner {
     private val notificationChannelId = "my_notification_channel"
@@ -28,7 +29,14 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
 
     // FlashlightViewModel instance
     private lateinit var flashlightViewModel : FlashlightViewModel
-
+        // getter with exception check
+//   fun getFlashlightViewModel() : FlashlightViewModel? {
+//        return if (::flashlightViewModel.isInitialized) {
+//            flashlightViewModel
+//        } else {
+//            null
+//        }
+//    }
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
         return binder
@@ -86,12 +94,20 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
     override val viewModelStore: ViewModelStore
         get() = ViewModelStore()
 
-    fun executeFlashEffect(flashEffect: FlashEffect) {
+    fun setFlashEffect(flashEffect: FlashEffect) {
         flashlightViewModel.setFlashEffect(flashEffect)
     }
 
-    fun triggerFlash(b:Boolean) {
-        flashlightViewModel.setFlashLight(b)
+    fun toggleFlash() {
+        flashlightViewModel.toggleFlash()
+    }
+
+    fun isFlashOn(): LiveData<Boolean> {
+        return flashlightViewModel.isFlashLightOn
+    }
+
+    fun getFlashEffect() : LiveData<FlashEffect> {
+        return flashlightViewModel.flashEffect
     }
 
 }

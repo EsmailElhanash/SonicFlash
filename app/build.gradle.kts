@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.esmailelhanash.flashlight"
+    namespace = "com.esmailelhanash.sonicflash"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.esmailelhanash.flashlight"
+        applicationId = "com.esmailelhanash.sonicflash"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
@@ -64,7 +64,8 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.lifecycle.service)
-
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.play.services.ads)
 
 
 

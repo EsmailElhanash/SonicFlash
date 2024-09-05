@@ -1,4 +1,4 @@
-package com.esmailelhanash.flashlight
+package com.esmailelhanash.sonicflash
 
 import org.junit.Test
 

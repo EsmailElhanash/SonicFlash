@@ -1,11 +1,11 @@
-package com.esmailelhanash.flashlight.data.camera
+package com.esmailelhanash.sonicflash.data.camera
 
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.lifecycle.LifecycleService
-import com.esmailelhanash.flashlight.domain.camera.ICameraProvider
+import com.esmailelhanash.sonicflash.domain.camera.ICameraProvider
 
 
 class CameraManager(private val lifecycleService: LifecycleService)
