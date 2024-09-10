@@ -11,10 +11,15 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.esmailelhanash.sonicflash.presentation.PermissionsHandler
 import com.esmailelhanash.sonicflash.service.FlashlightService
 import com.google.android.gms.ads.MobileAds
@@ -48,11 +53,13 @@ class MainActivity : ComponentActivity() {
             }
 
             if (cameraPermissionsGranted)
-                startFlashlightService(this)
-            else
-                PermissionsHandler.RequestMissingPermissions(this){
-                    startFlashlightService(this)
+                startFlashlightService(this@MainActivity)
+            else PermissionsHandler.RequestMissingPermissions(this@MainActivity){
+                    startFlashlightService(this@MainActivity)
                 }
+
+
+
 
             MainContent(cameraPermissionsGranted,flashlightServiceState.value) checkPermissions@{
                 cameraPermissionsGranted = PermissionsHandler.checkPermissions(this)

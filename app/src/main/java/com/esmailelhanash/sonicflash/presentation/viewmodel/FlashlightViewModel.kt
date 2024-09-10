@@ -19,8 +19,10 @@ class FlashlightViewModel(private val flashEffectExecute: FlashEffectExecute) : 
     }
     //set flashlight
     fun toggleFlash() {
+        val currentValue = _isFlashLightOn.value
         // trigger the value
-        _isFlashLightOn.value = !_isFlashLightOn.value!!
+        _isFlashLightOn.value = if (currentValue == null) true else !currentValue
+        // get the value
         // execute the effect
         isFlashLightOn.value?.let { executeEffect(it) }
     }

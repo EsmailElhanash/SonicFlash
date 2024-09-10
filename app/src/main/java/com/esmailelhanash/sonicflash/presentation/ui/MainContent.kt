@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -108,17 +109,30 @@ private fun MainColumnContent(
             )
         }
 
+        // a 40 db space
+        Box(
+            modifier = Modifier
+                .padding(20.dp)
+        )
+
+        // a row of flash modes
         FlashModesRow(lifecycleService)
 
-        AdContent()
+
+        // a 40 db space
+        Box(
+            modifier = Modifier
+                .padding(40.dp)
+        )
+
+        Box(
+            modifier = Modifier.height(300.dp)
+        ){ AdContent() }
 
     }
 }
 
-fun stopFlashlightService(context: Context) {
-    val intent = Intent(context, FlashlightService::class.java)
-    context.stopService(intent)
-}
+
 
 
 
