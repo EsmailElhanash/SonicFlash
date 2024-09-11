@@ -15,7 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.esmailelhanash.sonicflash.R
-import com.esmailelhanash.sonicflash.data.camera.CameraManager
+import com.esmailelhanash.sonicflash.data.camera.MyCameraManager
 import com.esmailelhanash.sonicflash.data.flashlight.FlashLightController
 import com.esmailelhanash.sonicflash.data.model.FlashEffect
 import com.esmailelhanash.sonicflash.data.model.defaultFlashModes
@@ -64,7 +64,7 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
     }
 
     private fun initializeCameraManager() {
-        cameraProvider = CameraManager(this)
+        cameraProvider = MyCameraManager(this)
     }
 
 

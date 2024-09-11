@@ -1,9 +1,12 @@
 package com.esmailelhanash.sonicflash.domain.camera
 
-import androidx.camera.core.Camera
+import android.hardware.camera2.CameraManager
+
 
 interface ICameraProvider {
-    fun getCamera(): Camera
+    fun cameraId(): String
+
+    fun cameraManager(): CameraManager
 
     fun destroyCamera()
 }
