@@ -1,8 +1,9 @@
 package com.esmailelhanash.sonicflash.data.flashlight
 
+import com.esmailelhanash.sonicflash.data.camera.CameraFactory
 import com.esmailelhanash.sonicflash.data.model.FlashEffect
-import com.esmailelhanash.sonicflash.domain.camera.ICameraProvider
-import com.esmailelhanash.sonicflash.domain.flashlight.IFlashLightController
+import com.esmailelhanash.sonicflash.domain.camera.ICamera
+import com.esmailelhanash.sonicflash.domain.flashlight.FlashEffectExecute
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -10,7 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightController(cameraProvider = cameraProvider) {
+class FlashLightController(private val cameraController: ICamera) : FlashEffectExecute {
     private var isRunning = false
     private lateinit var job : Job
 
@@ -54,11 +55,11 @@ class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightControl
     }
 
     private fun turnOn() {
-        cameraManager.setTorchMode(cameraId, true)
+        cameraController.turnOnFlash()
     }
 
     private fun turnOff() {
-        cameraManager.setTorchMode(cameraId, false)
+        cameraController.turnOffFlash()
     }
 
 }

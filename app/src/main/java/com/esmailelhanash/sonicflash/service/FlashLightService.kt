@@ -15,11 +15,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.esmailelhanash.sonicflash.R
-import com.esmailelhanash.sonicflash.data.camera.MyCameraManager
+import com.esmailelhanash.sonicflash.data.camera.CameraFactory
 import com.esmailelhanash.sonicflash.data.flashlight.FlashLightController
 import com.esmailelhanash.sonicflash.data.model.FlashEffect
 import com.esmailelhanash.sonicflash.data.model.defaultFlashModes
-import com.esmailelhanash.sonicflash.domain.camera.ICameraProvider
+import com.esmailelhanash.sonicflash.domain.camera.ICamera
 import com.esmailelhanash.sonicflash.presentation.ui.MainActivity
 import com.esmailelhanash.sonicflash.presentation.viewmodel.FlashlightViewModel
 import com.esmailelhanash.sonicflash.presentation.viewmodel.FlashlightViewModelFactory
@@ -27,7 +27,7 @@ import com.esmailelhanash.sonicflash.presentation.viewmodel.FlashlightViewModelF
 class FlashlightService : LifecycleService(), ViewModelStoreOwner {
     private val notificationChannelId = "my_notification_channel"
 
-    private lateinit var cameraProvider : ICameraProvider
+    private lateinit var cameraController: ICamera
     private val binder = LocalBinder()
 
     // toggle flash action
@@ -53,18 +53,18 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
             createNotificationChannel()
         }
         startForeground(1, createNotification())
-        initializeCameraManager()
+        initializeCameraController()
 
         flashlightViewModel = FlashlightViewModelFactory(
-            FlashLightController(cameraProvider)
+            FlashLightController(cameraController)
         ).create(FlashlightViewModel::class.java)
 
         flashlightViewModel.setFlashEffect(defaultFlashModes.first())
 
     }
 
-    private fun initializeCameraManager() {
-        cameraProvider = MyCameraManager(this)
+    private fun initializeCameraController() {
+        cameraController = CameraFactory.getCamera(this)
     }
 
 
