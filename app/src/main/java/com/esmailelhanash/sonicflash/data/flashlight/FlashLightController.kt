@@ -11,9 +11,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightController(cameraProvider = cameraProvider) {
-
-
-
     private var isRunning = false
     private lateinit var job : Job
 
@@ -57,15 +54,11 @@ class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightControl
     }
 
     private fun turnOn() {
-        cameraId.let {
-            cameraManager.setTorchMode(it, true)
-        }
+        cameraManager.setTorchMode(cameraId, true)
     }
 
     private fun turnOff() {
-        cameraId.let {
-            cameraManager.setTorchMode(it, false)
-        }
+        cameraManager.setTorchMode(cameraId, false)
     }
 
 }
