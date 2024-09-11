@@ -9,7 +9,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.util.concurrent.CancellationException
 
 class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightController(cameraProvider = cameraProvider) {
 
@@ -58,11 +57,15 @@ class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightControl
     }
 
     private fun turnOn() {
-        camera.cameraControl.enableTorch(true) // turn on flash
+        cameraId.let {
+            cameraManager.setTorchMode(it, true)
+        }
     }
 
     private fun turnOff() {
-        camera.cameraControl.enableTorch(false) // turn off flash
+        cameraId.let {
+            cameraManager.setTorchMode(it, false)
+        }
     }
 
 }
