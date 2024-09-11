@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.CancellationException
 
 class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightController(cameraProvider = cameraProvider) {
@@ -25,21 +26,35 @@ class FlashLightController(cameraProvider: ICameraProvider) : IFlashLightControl
     private fun flashEffectLoop(flashEffect: FlashEffect) {
         job = CoroutineScope(Dispatchers.IO).launch {
             turnOn()
-            while (isRunning) {
-                if (flashEffect.durationBetweenFlashPulsesInMilliSeconds != 0L) {
-                    delay(flashEffect.durationOfFlashPulseInMilliSeconds)
-                    turnOff()
-                    delay(flashEffect.durationBetweenFlashPulsesInMilliSeconds)
-                    turnOn()
+            try {
+                while (isRunning) {
+                    if (flashEffect.durationBetweenFlashPulsesInMilliSeconds != 0L) {
+                        delayWithCancellation(flashEffect.durationOfFlashPulseInMilliSeconds)
+                        turnOff()
+                        delayWithCancellation(flashEffect.durationBetweenFlashPulsesInMilliSeconds)
+                        turnOn()
+                    }
                 }
+            } finally {
+                turnOff() // Ensure the flashlight turns off when the loop ends
             }
-            turnOff() // turn off flash
         }
-        job.start()
+    }
+
+    private suspend fun delayWithCancellation(timeMillis: Long) {
+        suspendCancellableCoroutine { continuation ->
+            continuation.invokeOnCancellation {
+                // Turn off the flashlight immediately on cancellation
+                turnOff()
+            }
+            continuation.resumeWith(Result.success(Unit))
+        }
+        delay(timeMillis)
     }
 
     override fun stopFlashEffect() {
         isRunning = false
+        job.cancel()
     }
 
     private fun turnOn() {
