@@ -16,6 +16,10 @@ class FlashlightViewModel(private val flashPatternPlayer: IFlashPatternPlayer) :
     //set flash effect
     fun setFlashPattern(flashPattern: FlashPattern) {
         _flashPattern.value = flashPattern
+        // if flash on, execute the new pattern immediately
+        if (_isFlashLightOn.value == true) {
+            executePattern(true)
+        }
     }
     //set flashlight
     fun toggleFlash() {

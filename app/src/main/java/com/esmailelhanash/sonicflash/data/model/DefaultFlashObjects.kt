@@ -32,23 +32,27 @@ private val BREATHING_PATTERN = FlashPattern(
 )
 
 private val ASCENDING_PATTERN = FlashPattern(
-    "ASCENDING", createAscendingList(500),
-    afterPatternBehaviour = AfterPatternBehaviour.KEEP_LAST_EFFECT
+    "ASCENDING", generateFlashEffectList(500),
+    afterPatternBehaviour = AfterPatternBehaviour.STOP
 )
 
 private val DESCENDING_PATTERN = FlashPattern(
-    "DESCENDING", List(5) { BREATHING } +
-            List(5) { SOS } +
-            List(5) { PULSE } +
-            List(5) { STROBE } +
-            List(5) { TORCH },
-    afterPatternBehaviour = AfterPatternBehaviour.KEEP_LAST_EFFECT
+    "DESCENDING", generateFlashEffectList(500).reversed(),
+    afterPatternBehaviour = AfterPatternBehaviour.STOP
 )
 
-private fun createAscendingList(count: Int) : List<FlashEffect> {
-    return List(count) { STROBE.copy(pulseDuration = 10L + it * 1, afterPulseDuration = 10L + it * 1) }
-
-
+fun generateFlashEffectList(
+    count: Int,
+    initialDuration: Long = 10,
+    increaseAmount: Long = 5
+): List<FlashEffect> {
+    return List(count) { index ->
+        FlashEffect(
+            name = "Effect ${index + 1}",
+            pulseDuration = initialDuration + index * increaseAmount,
+            afterPulseDuration = initialDuration + index * increaseAmount
+        )
+    }
 }
 
 val defaultFlashPatterns = listOf(

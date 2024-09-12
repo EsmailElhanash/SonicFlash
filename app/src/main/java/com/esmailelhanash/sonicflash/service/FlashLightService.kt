@@ -32,6 +32,7 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
 
     // toggle flash action
     private val toggleAction = "toggle"
+    private val stopAction = "stop"
 
     // FlashlightViewModel instance
     private lateinit var flashlightViewModel : FlashlightViewModel
@@ -73,6 +74,12 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
         // if toggle command, toggle the flash
         if (intent?.action == toggleAction) {
             toggleFlash()
+        }else if (intent?.action == stopAction) {
+            stopSelf()
+            // if flash on, turn off
+            if (flashlightViewModel.isFlashLightOn.value == true) {
+                flashlightViewModel.toggleFlash()
+            }
         }
         return START_STICKY
     }
@@ -90,6 +97,7 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
             .setContentTitle("SonicFlash")
             .setContentText("SonicFlash is running")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+
             .addAction(
                 R.drawable.ic_launcher_foreground,  // Replace with your icon
                 "Toggle Flashlight",
@@ -98,6 +106,17 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
                     0,
                     Intent(this, FlashlightService::class.java).apply {
                         setAction(toggleAction)
+                    },
+                    PendingIntent.FLAG_MUTABLE
+                )
+            ).addAction(
+                android.R.drawable.ic_menu_close_clear_cancel,  // Replace with your icon
+                "Stop",
+                PendingIntent.getService(
+                    this,
+                    0,
+                    Intent(this, FlashlightService::class.java).apply {
+                        setAction(stopAction)
                     },
                     PendingIntent.FLAG_MUTABLE
                 )

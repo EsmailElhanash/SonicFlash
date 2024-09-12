@@ -1,6 +1,5 @@
 package com.esmailelhanash.sonicflash.presentation.ui
 
-import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -11,15 +10,10 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import com.esmailelhanash.sonicflash.presentation.PermissionsHandler
 import com.esmailelhanash.sonicflash.service.FlashlightService
 import com.google.android.gms.ads.MobileAds
@@ -94,6 +88,13 @@ class MainActivity : ComponentActivity() {
         if (isBound) {
             unbindService(serviceConnection)
             isBound = false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (flashlightServiceState.value?.isFlashOn()?.value != true) {
+            flashlightServiceState.value?.stopSelf()
         }
     }
 }

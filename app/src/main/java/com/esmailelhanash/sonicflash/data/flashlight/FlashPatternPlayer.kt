@@ -17,7 +17,11 @@ class FlashPatternPlayer(private val flashToggle: ICameraToggle) : IFlashPattern
     private var isRunning = false
     private lateinit var job : Job
 
+
     override fun playPattern(flashPattern: FlashPattern) {
+        if (isRunning) {
+            stopPattern()
+        }
         isRunning = true
         play(flashPattern)
     }
@@ -31,11 +35,9 @@ class FlashPatternPlayer(private val flashToggle: ICameraToggle) : IFlashPattern
                     }
                 }
             }
+            stopPattern()
         }
         job.start()
-        job.invokeOnCompletion {
-            isRunning = false
-        }
     }
 
     private suspend fun afterPatternWrapper(flashPattern: FlashPattern,
@@ -68,9 +70,11 @@ class FlashPatternPlayer(private val flashToggle: ICameraToggle) : IFlashPattern
     override fun stopPattern() {
         isRunning = false
         job.cancel()
+        flashToggle.turnOffFlash()
     }
 
     private suspend fun flashEffectPlayer(flashEffect: FlashEffect) {
+        if (!isRunning) return
         flashToggle.turnOnFlash()
         if (flashEffect.afterPulseDuration != 0L) {
             delayWithCancellation(flashEffect.pulseDuration)
