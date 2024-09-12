@@ -16,9 +16,9 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.esmailelhanash.sonicflash.R
 import com.esmailelhanash.sonicflash.data.camera.CameraFactory
-import com.esmailelhanash.sonicflash.data.flashlight.FlashLightController
-import com.esmailelhanash.sonicflash.data.model.FlashEffect
-import com.esmailelhanash.sonicflash.data.model.defaultFlashModes
+import com.esmailelhanash.sonicflash.data.flashlight.FlashPatternPlayer
+import com.esmailelhanash.sonicflash.data.model.FlashPattern
+import com.esmailelhanash.sonicflash.data.model.defaultFlashPatterns
 import com.esmailelhanash.sonicflash.domain.camera.ICamera
 import com.esmailelhanash.sonicflash.presentation.ui.MainActivity
 import com.esmailelhanash.sonicflash.presentation.viewmodel.FlashlightViewModel
@@ -56,10 +56,10 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
         initializeCameraController()
 
         flashlightViewModel = FlashlightViewModelFactory(
-            FlashLightController(cameraController)
+            FlashPatternPlayer(cameraController)
         ).create(FlashlightViewModel::class.java)
 
-        flashlightViewModel.setFlashEffect(defaultFlashModes.first())
+        flashlightViewModel.setFlashPattern(defaultFlashPatterns.first())
 
     }
 
@@ -121,8 +121,8 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
     override val viewModelStore: ViewModelStore
         get() = ViewModelStore()
 
-    fun setFlashEffect(flashEffect: FlashEffect) {
-        flashlightViewModel.setFlashEffect(flashEffect)
+    fun setFlashPattern(flashPattern: FlashPattern) {
+        flashlightViewModel.setFlashPattern(flashPattern)
     }
 
     fun toggleFlash() {
@@ -133,8 +133,8 @@ class FlashlightService : LifecycleService(), ViewModelStoreOwner {
         return flashlightViewModel.isFlashLightOn
     }
 
-    fun getFlashEffect() : LiveData<FlashEffect> {
-        return flashlightViewModel.flashEffect
+    fun getFlashPattern() : LiveData<FlashPattern> {
+        return flashlightViewModel.flashPattern
     }
 
 }

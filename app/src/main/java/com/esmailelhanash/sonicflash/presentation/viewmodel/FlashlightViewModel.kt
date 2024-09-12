@@ -4,18 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.esmailelhanash.sonicflash.data.model.FlashEffect
-import com.esmailelhanash.sonicflash.domain.flashlight.FlashEffectExecute
+import com.esmailelhanash.sonicflash.data.model.FlashPattern
+import com.esmailelhanash.sonicflash.domain.flashlight.IFlashPatternPlayer
 
-class FlashlightViewModel(private val flashEffectExecute: FlashEffectExecute) : ViewModel() {
+class FlashlightViewModel(private val flashPatternPlayer: IFlashPatternPlayer) : ViewModel() {
     private var _isFlashLightOn : MutableLiveData<Boolean> = MutableLiveData()
     val isFlashLightOn : LiveData<Boolean> = _isFlashLightOn
 
-    private var _flashEffect : MutableLiveData<FlashEffect> = MutableLiveData()
-    val flashEffect : LiveData<FlashEffect> = _flashEffect
+    private var _flashPattern : MutableLiveData<FlashPattern> = MutableLiveData()
+    val flashPattern : LiveData<FlashPattern> = _flashPattern
     //set flash effect
-    fun setFlashEffect(flashEffect: FlashEffect) {
-        _flashEffect.value = flashEffect
+    fun setFlashPattern(flashPattern: FlashPattern) {
+        _flashPattern.value = flashPattern
     }
     //set flashlight
     fun toggleFlash() {
@@ -24,14 +24,14 @@ class FlashlightViewModel(private val flashEffectExecute: FlashEffectExecute) : 
         _isFlashLightOn.value = if (currentValue == null) true else !currentValue
         // get the value
         // execute the effect
-        isFlashLightOn.value?.let { executeEffect(it) }
+        isFlashLightOn.value?.let { executePattern(it) }
     }
 
-    private fun executeEffect(isFlashLightOn: Boolean) {
+    private fun executePattern(isFlashLightOn: Boolean) {
         if (isFlashLightOn) {
-            flashEffectExecute.executeFlashEffect(_flashEffect.value!!)
+            flashPatternPlayer.playPattern(_flashPattern.value!!)
         } else {
-            flashEffectExecute.stopFlashEffect()
+            flashPatternPlayer.stopPattern()
         }
     }
 
@@ -39,8 +39,8 @@ class FlashlightViewModel(private val flashEffectExecute: FlashEffectExecute) : 
 }
 
 // factory for the viewmodel
-class FlashlightViewModelFactory(private val flashEffectExecute: FlashEffectExecute) : ViewModelProvider.Factory {
+class FlashlightViewModelFactory(private val flashPatternPlayer: IFlashPatternPlayer) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return FlashlightViewModel(flashEffectExecute) as T
+        return FlashlightViewModel(flashPatternPlayer) as T
     }
 }

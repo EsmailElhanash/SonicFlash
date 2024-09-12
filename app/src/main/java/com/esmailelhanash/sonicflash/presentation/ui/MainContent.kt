@@ -26,11 +26,13 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import com.esmailelhanash.sonicflash.R
-import com.esmailelhanash.sonicflash.data.model.defaultFlashModes
+import com.esmailelhanash.sonicflash.data.model.defaultFlashPatterns
 import com.esmailelhanash.sonicflash.presentation.ui.theme.FlashLightTheme
 import com.esmailelhanash.sonicflash.service.FlashlightService
 
@@ -138,7 +140,7 @@ private fun MainColumnContent(
 
 @Composable
 private fun FlashModesRow(lifecycleService: FlashlightService) {
-    val flashEffect = lifecycleService.getFlashEffect().observeAsState().value
+    val flashEffect = lifecycleService.getFlashPattern().observeAsState().value
     val scrollState = rememberScrollState()
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -146,8 +148,8 @@ private fun FlashModesRow(lifecycleService: FlashlightService) {
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        defaultFlashModes.forEach { flashMode ->
-            val isSelected = flashEffect == flashMode
+        defaultFlashPatterns.forEach { flashPattern ->
+            val isSelected = flashEffect == flashPattern
             val backgroundColor = if (isSelected) Color.Black else Color.White
             val textColor = if (isSelected) Color.White else Color.Black
 
@@ -155,12 +157,12 @@ private fun FlashModesRow(lifecycleService: FlashlightService) {
                 modifier = Modifier
                     .background(backgroundColor, shape = RoundedCornerShape(8.dp))
                     .clickable {
-                        lifecycleService.setFlashEffect(flashMode)
+                        lifecycleService.setFlashPattern(flashPattern)
                     }
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
-                    flashMode.name,
+                    flashPattern.name,
                     color = textColor,
                     modifier = Modifier.padding(8.dp)
                 )
@@ -185,7 +187,7 @@ private fun MainAppBar() {
     ){
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Flashlight",
+            contentDescription = getString(LocalContext.current,R.string.app_name),
             tint = Color.White,
             modifier = Modifier.size(100.dp)
         )
