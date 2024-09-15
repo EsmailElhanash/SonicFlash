@@ -37,7 +37,7 @@ private val ASCENDING_PATTERN = FlashPattern(
 )
 
 private val DESCENDING_PATTERN = FlashPattern(
-    "DESCENDING", generateFlashEffectList(500).reversed(),
+    "DESCENDING", generateFlashEffectList(50, increaseAmount = 100).reversed(),
     afterPatternBehaviour = AfterPatternBehaviour.STOP
 )
 

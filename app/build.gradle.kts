@@ -14,6 +14,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val admobAppId = project.findProperty("ADMOB_APP_ID") as String
+        val admobUnitId = project.findProperty("ADMOB_UNIT_ID") as String
+
+        buildConfigField("String", "ADMOB_APP_ID", admobAppId)
+        buildConfigField("String", "ADMOB_UNIT_ID", admobUnitId)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -66,6 +72,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.play.services.ads)
+    
+    implementation(libs.guava) // Use the latest version
 
 
 
