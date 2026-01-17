@@ -11,7 +11,7 @@ android {
         applicationId = "com.esmailelhanash.sonicflash"
         minSdk = 21
         targetSdk = 34
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0"
 
         val admobAppId = project.findProperty("ADMOB_APP_ID") as String

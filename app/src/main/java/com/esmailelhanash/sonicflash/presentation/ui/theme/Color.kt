@@ -7,7 +7,6 @@ val IconWhite = Color(0xFFFFFFFF) // White color for the flashlight icon
 val ElementDarkGray = Color(0xFF333333) // Dark Gray for additional elements
 
 val LightBlue = Color(0xFF59A5D8) // A lighter blue shade
-val LighterBlue = Color(0xFFBFFAFF) // A lighter blue shade
 
 
 val VibrantRed = Color(0xFFFF1744) // Vibrant Red
@@ -22,15 +21,3 @@ val VibrantLime = Color(0xFFC6FF00) // Vibrant Lime
 val VibrantMagenta = Color(0xFFFF00FF) // Vibrant Magenta
 
 
-val VibrantColors = listOf(
-    VibrantRed,
-    VibrantOrange,
-    VibrantYellow,
-    VibrantGreen,
-    VibrantTeal,
-    VibrantBlue,
-    VibrantPurple,
-    VibrantPink,
-    VibrantLime,
-    VibrantMagenta,
-)
